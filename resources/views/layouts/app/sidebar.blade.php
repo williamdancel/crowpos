@@ -15,6 +15,9 @@
                     <flux:sidebar.item icon="shopping-cart" :href="route('pos.index')" :current="request()->routeIs('pos.index')" wire:navigate>
                         {{ __('POS') }}
                     </flux:sidebar.item>
+                    <flux:sidebar.item icon="banknotes" :href="route('sales.index')" :current="request()->routeIs('sales.index')" wire:navigate>
+                        {{ __('Sales') }}
+                    </flux:sidebar.item>
                     <flux:sidebar.item icon="folder" :href="route('items.index')" :current="request()->routeIs('items.index')" wire:navigate>
                         {{ __('Items') }}
                     </flux:sidebar.item>
