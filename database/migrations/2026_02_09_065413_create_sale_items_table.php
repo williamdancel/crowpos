@@ -4,33 +4,26 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('sale_items', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('sale_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('item_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('item_id')->constrained()->restrictOnDelete();
 
-            $table->integer('qty');
-            $table->decimal('unit_price', 10, 2);
-            $table->decimal('line_total', 10, 2);
-
-            // Staff assignment (used heavily by salons)
-            $table->foreignId('assigned_user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->string('item_name');              // snapshot
+            $table->decimal('unit_price', 12, 2);     // snapshot
+            $table->unsignedInteger('qty')->default(1);
+            $table->decimal('line_total', 12, 2);
 
             $table->timestamps();
+
+            $table->index(['sale_id', 'item_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('sale_items');

@@ -3,17 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SaleItem extends Model
 {
     protected $fillable = [
-        'sale_id',
-        'item_id',
-        'qty',
-        'unit_price',
-        'line_total',
-        'assigned_user_id',
+        'sale_id','item_id','item_name','unit_price','qty','line_total',
     ];
 
     protected $casts = [
@@ -21,19 +15,13 @@ class SaleItem extends Model
         'line_total' => 'decimal:2',
     ];
 
-    public function sale(): BelongsTo
+    public function sale()
     {
         return $this->belongsTo(Sale::class);
     }
 
-    public function item(): BelongsTo
+    public function item()
     {
         return $this->belongsTo(Item::class);
-    }
-
-    public function assignedStaff(): BelongsTo
-    {
-        // optional staff member tied to the line item (salon commissions later)
-        return $this->belongsTo(User::class, 'assigned_user_id');
     }
 }

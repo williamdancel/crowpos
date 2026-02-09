@@ -3,46 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Sale extends Model
 {
     protected $fillable = [
-        'sale_no',
-        'customer_id',
         'user_id',
-        'subtotal',
-        'discount_total',
-        'total',
-        'payment_method',
-        'paid_amount',
-        'change_amount',
-        'status',
-        'sold_at',
+        'subtotal','discount','tax','total',
+        'payment_method','payment_reference',
+        'amount_paid','change',
     ];
 
     protected $casts = [
         'subtotal' => 'decimal:2',
-        'discount_total' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'tax' => 'decimal:2',
         'total' => 'decimal:2',
-        'paid_amount' => 'decimal:2',
-        'change_amount' => 'decimal:2',
-        'sold_at' => 'datetime',
+        'amount_paid' => 'decimal:2',
+        'change' => 'decimal:2',
     ];
 
-    public function customer(): BelongsTo
-    {
-        return $this->belongsTo(Customer::class);
-    }
-
-    public function cashier(): BelongsTo
-    {
-        // user_id is the cashier who made the sale
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function items(): HasMany
+    public function items()
     {
         return $this->hasMany(SaleItem::class);
     }

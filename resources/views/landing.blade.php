@@ -27,7 +27,7 @@
 
             @if (Route::has('login'))
                 @auth
-                    <a class="btn" href="{{ url('/dashboard') }}">Open POS</a>
+                    <a class="btn" href="{{ url('/pos') }}">Open POS</a>
                 @else
                     <a class="btn" href="{{ route('login') }}">Login</a>
                 @endauth
