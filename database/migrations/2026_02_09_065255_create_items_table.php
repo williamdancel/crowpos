@@ -4,28 +4,23 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['product', 'service']);
+            $table->string('type', 20); // product | service
             $table->string('name');
-            $table->string('sku')->nullable();
-            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 12, 2)->default(0); // ✅ simple & safe
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->index(['type', 'is_active']);
+            $table->index('name');
         });
+
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('items');
