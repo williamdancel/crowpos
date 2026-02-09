@@ -3,14 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'name',
+        'is_active',
+    ];
 
-    public function items(): HasMany
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function items()
     {
-        return $this->hasMany(Item::class);
+        return $this->hasMany(\App\Models\Item::class);
     }
 }

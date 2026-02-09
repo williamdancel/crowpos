@@ -5,6 +5,7 @@ namespace App\Livewire\Items;
 use App\Models\Item;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Models\Category;
 
 class Index extends Component
 {
@@ -23,6 +24,8 @@ class Index extends Component
     public string $name = '';
     public string $price = '0.00'; // uses Item::setPriceAttribute -> price_cents
     public bool $is_active = true;
+    public ?int $category_id = null;
+    public string $categoryFilter = 'all'; 
 
     protected $queryString = [
         'search' => ['except' => ''],
@@ -49,6 +52,7 @@ class Index extends Component
         $this->type = $item->type;
         $this->name = $item->name;
         $this->price = $item->price; // accessor returns formatted string
+        $this->category_id = $item->category_id;
         $this->is_active = (bool) $item->is_active;
 
         $this->showModal = true;
@@ -60,16 +64,17 @@ class Index extends Component
             'type' => ['required', 'in:product,service'],
             'name' => ['required', 'string', 'max:255'],
             'price' => ['required', 'numeric', 'min:0'],
+            'category_id' => ['nullable', 'exists:categories,id'],
             'is_active' => ['boolean'],
         ]);
 
-        // Use mutator setPriceAttribute => price_cents
-        $item = Item::updateOrCreate(
+        Item::updateOrCreate(
             ['id' => $this->editingId],
             [
                 'type' => $data['type'],
                 'name' => $data['name'],
-                'price' => $data['price'], // triggers mutator
+                'category_id' => $data['category_id'],
+                'price' => $data['price'],
                 'is_active' => $data['is_active'],
             ]
         );
@@ -107,25 +112,24 @@ class Index extends Component
         $this->name = '';
         $this->price = '0.00';
         $this->is_active = true;
+        $this->category_id = null;
     }
 
     public function render()
     {
-        $items = Item::query()
-            ->when($this->search !== '', fn ($q) =>
-                $q->where('name', 'like', "%{$this->search}%")
-            )
-            ->when($this->typeFilter !== 'all', fn ($q) =>
-                $q->where('type', $this->typeFilter)
-            )
-            ->when($this->statusFilter !== 'all', fn ($q) =>
-                $q->where('is_active', $this->statusFilter === 'active')
-            )
+        $categories = Category::query()
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
+
+       $items = Item::query()
+            ->with('category')
+            ->when($this->search !== '', fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
+            ->when($this->typeFilter !== 'all', fn ($q) => $q->where('type', $this->typeFilter))
+            ->when($this->statusFilter !== 'all', fn ($q) => $q->where('is_active', $this->statusFilter === 'active'))
             ->latest()
             ->paginate($this->perPage);
 
-        return view('livewire.items.index', [
-            'items' => $items,
-        ]);
-    }
+        return view('livewire.items.index', compact('items', 'categories'));
+            }
 }

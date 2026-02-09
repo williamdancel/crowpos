@@ -9,6 +9,7 @@ class Item extends Model
     protected $fillable = [
         'type',
         'name',
+        'category_id',
         'price',
         'is_active',
     ];
@@ -17,4 +18,9 @@ class Item extends Model
         'price' => 'decimal:2',
         'is_active' => 'boolean',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(\App\Models\Category::class);
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Categories\Index as CategoriesIndex;
 
 Route::get('/', function () {
     return view('landing');
@@ -13,6 +14,7 @@ Route::view('dashboard', 'dashboard')
 
 Route::middleware(['auth'])->group(function () {
     Route::view('/items', 'items.index')->name('items.index');
+    Route::get('/categories', CategoriesIndex::class)->name('categories.index');
 });
 
 

@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
             $table->string('type', 20); // product | service
             $table->string('name');
             $table->decimal('price', 12, 2)->default(0); // ✅ simple & safe

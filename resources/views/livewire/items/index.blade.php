@@ -49,6 +49,7 @@
                 <tr>
                     <th class="px-5 py-3">Type</th>
                     <th class="px-5 py-3">Name</th>
+                    <th class="px-5 py-3">Category</th>
                     <th class="px-5 py-3">Price</th>
                     <th class="px-5 py-3">Status</th>
                     <th class="px-5 py-3 text-right">Actions</th>
@@ -66,11 +67,12 @@
 
                         <td class="px-5 py-3 font-medium text-gray-900">{{ $item->name }}</td>
 
+                        <td class="px-5 py-3 text-gray-700"> {{ $item->category?->name ?? '—' }}</td>
+
                         <td class="px-5 py-3 text-gray-700">₱{{ $item->price }}</td>
 
                         <td class="px-5 py-3">
                             <button type="button"
-                                wire:click="toggleActive({{ $item->id }})"
                                 class="rounded-full px-3 py-1 text-xs font-semibold
                                     {{ $item->is_active ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-gray-100 text-gray-700 border border-gray-200' }}">
                                 {{ $item->is_active ? 'Active' : 'Inactive' }}
@@ -140,6 +142,23 @@
                             <option value="product">Product</option>
                         </select>
                         @error('type') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="mb-1 block text-sm font-medium text-gray-700">Category</label>
+
+                        <select
+                            wire:model.defer="category_id"
+                            class="w-full rounded-lg border-2 border-gray-300 bg-gray-50 px-3 py-2
+                                text-gray-900 focus:border-gray-900 focus:bg-white focus:outline-none"
+                        >
+                            <option value="">— None —</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                            @endforeach
+                        </select>
+
+                        @error('category_id') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
                     </div>
 
                     <div>
