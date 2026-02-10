@@ -5,6 +5,7 @@ namespace App\Livewire\Categories;
 use App\Models\Category;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Illuminate\Support\Facades\DB;
 
 class Index extends Component
 {
@@ -62,9 +63,13 @@ class Index extends Component
         session()->flash('status', $this->editingId ? 'Category updated.' : 'Category created.');
     }
 
-    public function delete(int $id)
+    public function delete(int $id): void
     {
-        Category::whereKey($id)->delete();
+        DB::transaction(function () use ($id) {
+            $category = Category::findOrFail($id);
+            $category->items()->delete(); // soft delete items
+            $category->delete();
+        });
         session()->flash('status', 'Category deleted.');
     }
 

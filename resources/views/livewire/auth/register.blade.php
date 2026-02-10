@@ -63,5 +63,8 @@
             <span>{{ __('Already have an account?') }}</span>
             <flux:link :href="route('login')" wire:navigate>{{ __('Log in') }}</flux:link>
         </div>
+        <div class="space-x-1 text-sm text-center rtl:space-x-reverse text-zinc-600 dark:text-zinc-400">
+                <a href="{{ route('home') }}">{{ __("Go to Home") }}</a>
+        </div>
     </div>
 </x-layouts::auth>

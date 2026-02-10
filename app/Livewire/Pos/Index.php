@@ -125,8 +125,14 @@ class Index extends Component
         return in_array($this->payment_method, ['gcash', 'maya', 'debit_card'], true);
     }
 
+    public bool $isCheckingOut = false;
+
     public function checkout()
     {
+        if ($this->isCheckingOut) {
+            return; // prevents double-click / double-submit
+        }
+
         if (count($this->cart) === 0) {
             $this->addError('cart', 'Cart is empty.');
             return;
@@ -143,61 +149,41 @@ class Index extends Component
             return;
         }
 
-        DB::transaction(function () use ($paid) {
-            $sale = Sale::create([
-                'user_id' => Auth::id(),
-                'subtotal' => $this->subtotal,
-                'discount' => 0,
-                'tax' => 0,
-                'total' => $this->total,
-                'payment_method' => $this->payment_method,
-                'payment_reference' => $this->requiresReference() ? trim((string)$this->payment_reference) : null,
-                'amount_paid' => round($paid, 2),
-                'change' => $this->change,
-            ]);
+        $this->isCheckingOut = true;
 
-            foreach ($this->cart as $row) {
-                $sale->items()->create([
-                    'item_id' => $row['id'],
-                    'item_name' => $row['name'],
-                    'unit_price' => round((float) $row['price'], 2),
-                    'qty' => (int) $row['qty'],
-                    'line_total' => round((float) ($row['line_total'] ?? ((float)$row['price'] * (int)$row['qty'])), 2),
+        try {
+            $saleId = DB::transaction(function () use ($paid) {
+                $sale = Sale::create([
+                    'user_id' => Auth::id(),
+                    'subtotal' => $this->subtotal,
+                    'discount' => 0,
+                    'tax' => 0,
+                    'total' => $this->total,
+                    'payment_method' => $this->payment_method,
+                    'payment_reference' => $this->requiresReference() ? trim((string) $this->payment_reference) : null,
+                    'amount_paid' => round($paid, 2),
+                    'change' => $this->change,
                 ]);
-            }
-        });
 
-        $saleId = null;
+                foreach ($this->cart as $row) {
+                    $sale->items()->create([
+                        'item_id' => $row['id'],
+                        'item_name' => $row['name'],
+                        'unit_price' => round((float) $row['price'], 2),
+                        'qty' => (int) $row['qty'],
+                        'line_total' => round((float) ($row['line_total'] ?? ((float)$row['price'] * (int)$row['qty'])), 2),
+                    ]);
+                }
 
-        DB::transaction(function () use ($paid, &$saleId) {
-            $sale = Sale::create([
-                'user_id' => Auth::id(),
-                'subtotal' => $this->subtotal,
-                'discount' => 0,
-                'tax' => 0,
-                'total' => $this->total,
-                'payment_method' => $this->payment_method,
-                'payment_reference' => $this->requiresReference() ? trim((string)$this->payment_reference) : null,
-                'amount_paid' => round($paid, 2),
-                'change' => $this->change,
-            ]);
+                return $sale->id;
+            });
 
-            foreach ($this->cart as $row) {
-                $sale->items()->create([
-                    'item_id' => $row['id'],
-                    'item_name' => $row['name'],
-                    'unit_price' => round((float) $row['price'], 2),
-                    'qty' => (int) $row['qty'],
-                    'line_total' => round((float) ($row['line_total'] ?? ((float)$row['price'] * (int)$row['qty'])), 2),
-                ]);
-            }
+            $this->clearCart();
 
-            $saleId = $sale->id;
-        });
-
-        $this->clearCart();
-
-        return redirect()->route('pos.receipt', $saleId);
+            return redirect()->route('pos.receipt', $saleId);
+        } finally {
+            $this->isCheckingOut = false;
+        }
     }
 
     public function render()

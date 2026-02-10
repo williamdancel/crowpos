@@ -87,7 +87,7 @@ class Index extends Component
 
     public function delete(int $id): void
     {
-        Item::whereKey($id)->delete();
+        Item::findOrFail($id)->delete();
         session()->flash('status', 'Item deleted.');
         $this->resetPage();
     }

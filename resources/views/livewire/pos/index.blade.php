@@ -152,10 +152,10 @@
                                 type="number"
                                 step="0.01"
                                 min="0"
-                                wire:model.defer="amount_paid"
+                                wire:model.live.debounce.200ms="amount_paid"
                                 placeholder="Amount paid"
                                 class="w-full rounded-lg border-2 border-gray-300 bg-gray-50 px-3 py-2 text-sm
-                                       focus:border-gray-900 focus:bg-white focus:outline-none"
+                                    focus:border-gray-900 focus:bg-white focus:outline-none"
                             />
                             @error('amount_paid')
                                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
@@ -194,11 +194,15 @@
 
                     <button
                         wire:click="checkout"
-                        class="w-full rounded-xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-800"
+                        wire:loading.attr="disabled"
+                        wire:target="checkout"
+                        class="w-full rounded-xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-60"
                         @disabled(count($cart) === 0)
                     >
-                        Checkout
+                        <span wire:loading.remove wire:target="checkout">Checkout</span>
+                        <span wire:loading wire:target="checkout">Processing...</span>
                     </button>
+
                 </div>
             </div>
         </div>
