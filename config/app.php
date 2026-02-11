@@ -104,6 +104,10 @@ return [
             explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
         ),
     ],
+    // Business Name, Logo and Tagline
+    'business_name' => env('BUSINESS_NAME', 'CrowPOS'),
+    'business_logo' => env('BUSINESS_LOGO_PATH', '/images/crowPOS.png'),
+    'business_tagline' => env('BUSINESS_TAGLINE', 'Simple point of sale for daily business.'),
 
     /*
     |--------------------------------------------------------------------------

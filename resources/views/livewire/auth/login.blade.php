@@ -59,4 +59,5 @@
             </div>
             
     </div>
+    
 </x-layouts::auth>

@@ -67,13 +67,13 @@
     <div class="wrap">
         <div class="card">
             <div>
-                <img src="/images/crowPOS.png" alt="CrowPOS Logo" style="width: 48px; height: 48px;">
+                <img src="{{config('app.business_logo')}}" alt="{{config('app.business_name')}} Logo" style="width: 48px; height: 48px;">
             </div>
 
-            <h1>CrowPOS</h1>
+            <h1>{{config('app.business_name')}}</h1>
 
             <p class="tagline">
-                Simple point of sale for daily business.
+                {{config('app.business_tagline')}}
             </p>
 
             @if (Route::has('login'))
@@ -83,12 +83,12 @@
                     <a class="btn" href="{{ route('login') }}" id="loginBtn">Login</a>
                 @endauth
             @endif
-
             <div class="small">
-                © {{ date('Y') }} CrowPOS
+                Powered by {{config('app.name')}} © {{ date('Y') }}
             </div>
         </div>
     </div>
+    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
