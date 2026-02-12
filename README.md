@@ -145,8 +145,8 @@ Full-Stack PHP Developer
 -   Laravel / CodeIgniter / VueJS / Livewire / NativePHP
 -   REST APIs & business systems
 
-📍 San Pablo City, Laguna, Philippines
-🔗 GitHub: https://github.com/williamdancel
+🔗 Github: https://github.com/williamdancel
+🔗 Portfolio: https://whadancel.dev/
 
 ------------------------------------------------------------------------
 
