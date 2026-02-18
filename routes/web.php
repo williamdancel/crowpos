@@ -9,7 +9,7 @@ use App\Livewire\Sales\Index as SalesIndex;
 Route::get('/', fn () => view('landing'))->name('home');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/pos', PosIndex::class)->name('dashboard');
+    Route::get('/pos', PosIndex::class)->name('pos.index');
 
     Route::view('/items', 'items.index')->name('items.index');
     Route::get('/categories', CategoriesIndex::class)->name('categories.index');
